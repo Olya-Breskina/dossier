@@ -27,6 +27,6 @@ public class MailSenderImpl implements MailSender {
     }
 
     private String buildText(EmailMessage emailMessage) {
-        return String.format("Добрый день,заявки с № $s: $s", emailMessage.getApplicationId(), emailMessage.getTheme());
+        return String.format("Добрый день,заявки с № %s: %s", emailMessage.getApplicationId(), emailMessage.getTheme());
     }
 }
