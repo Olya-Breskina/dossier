@@ -5,6 +5,8 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.kafka.annotation.KafkaListener;
 import org.springframework.stereotype.Component;
+import org.springframework.web.bind.annotation.PathVariable;
+import ru.podgoretskaya.dossier.client.ConveyorClient;
 import ru.podgoretskaya.dossier.dto.EmailMessage;
 
 @Component
@@ -12,6 +14,8 @@ import ru.podgoretskaya.dossier.dto.EmailMessage;
 @RequiredArgsConstructor
 public class DossierConsumer {
     private final MailSender mailSender;
+    private  String sescode;
+    private final ConveyorClient conveyorClient;
     @KafkaListener(topics = "finish-registration", groupId = "dossier")
     public void finishRegistration(String message)  {
         log.info("получено сообщение:{}", message);
@@ -38,6 +42,7 @@ public class DossierConsumer {
     public void sendSes(String message)  {
         log.info("получено сообщение:{}", message);
         EmailMessage emailMessage= messageToSend(message);
+        sescode= send(emailMessage.getApplicationId());
         mailSender.sendMail(emailMessage);
     }
 
@@ -62,4 +67,9 @@ public class DossierConsumer {
             throw new IllegalArgumentException();
         }
     }
+    private String send (@PathVariable Long applicationId) {
+
+        return conveyorClient.send(applicationId);
+    }
+
 }
