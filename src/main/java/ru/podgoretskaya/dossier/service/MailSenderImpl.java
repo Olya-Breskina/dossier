@@ -29,7 +29,8 @@ public class MailSenderImpl implements MailSender {
     private String buildText(EmailMessage emailMessage) {
         String  messageFoSend = new String();
         switch (emailMessage.getTheme()) {
-            case FINISH_REGISTRATION:  messageFoSend= String.format("Добрый день,заявка на кредит № %s, пожалуйста закончите регистрацию", emailMessage.getApplicationId());break;
+            case FINISH_REGISTRATION:  { messageFoSend= String.format("Здравствуйте, ваша заявка на кредит № %s одобрена! Теперь вам необходимо завершить регистрацию по следующей ссылке:{http://localhost:8080/swagger-ui/index.html#/Реализация%20кредитного%20конвейера/getOffersPages}", emailMessage.getApplicationId());
+                break;}
             case SEND_SES: messageFoSend= String.format("Добрый день,заявка на кредит № %s, введите код подтверждения", emailMessage.getApplicationId());break;
             case CREDIT_ISSUED:messageFoSend= String.format("Добрый день,вам выдан кредит");break;
             case SEND_DOCUMENTS:messageFoSend= String.format("Добрый день,заявка на кредит № %s, отправить документы", emailMessage.getApplicationId());break;
