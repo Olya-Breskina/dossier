@@ -5,8 +5,6 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.kafka.annotation.KafkaListener;
 import org.springframework.stereotype.Component;
-import org.springframework.web.bind.annotation.PathVariable;
-import ru.podgoretskaya.dossier.client.ConveyorClient;
 import ru.podgoretskaya.dossier.dto.EmailMessage;
 
 @Component
@@ -14,62 +12,57 @@ import ru.podgoretskaya.dossier.dto.EmailMessage;
 @RequiredArgsConstructor
 public class DossierConsumer {
     private final MailSender mailSender;
-    private  String sescode;
-    private final ConveyorClient conveyorClient;
+
     @KafkaListener(topics = "finish-registration", groupId = "dossier")
-    public void finishRegistration(String message)  {
+    public void finishRegistration(String message) {
         log.info("получено сообщение:{}", message);
-       EmailMessage emailMessage= messageToSend(message);
+        EmailMessage emailMessage = messageToSend(message);
 
         mailSender.sendMail(emailMessage);
     }
 
     @KafkaListener(topics = "create-documents", groupId = "dossier")
-    public void createDocuments(String message)   {
+    public void createDocuments(String message) {
         log.info("получено сообщение:{}", message);
-        EmailMessage emailMessage= messageToSend(message);
+        EmailMessage emailMessage = messageToSend(message);
         mailSender.sendMail(emailMessage);
     }
 
     @KafkaListener(topics = "send-documents", groupId = "dossier")
-    public void sendDocuments(String message)   {
+    public void sendDocuments(String message) {
         log.info("получено сообщение:{}", message);
-        EmailMessage emailMessage= messageToSend(message);
+        EmailMessage emailMessage = messageToSend(message);
         mailSender.sendMail(emailMessage);
     }
 
     @KafkaListener(topics = "send-ses", groupId = "dossier")
-    public void sendSes(String message)  {
+    public void sendSes(String message) {
         log.info("получено сообщение:{}", message);
-        EmailMessage emailMessage= messageToSend(message);
-        sescode= send(emailMessage.getApplicationId());
+        EmailMessage emailMessage = messageToSend(message);
         mailSender.sendMail(emailMessage);
     }
 
     @KafkaListener(topics = "credit-issued", groupId = "dossier")
-    public void creditIssued(String message)   {
+    public void creditIssued(String message) {
         log.info("получено сообщение:{}", message);
-        EmailMessage emailMessage= messageToSend(message);
+        EmailMessage emailMessage = messageToSend(message);
         mailSender.sendMail(emailMessage);
     }
 
     @KafkaListener(topics = "application-denied", groupId = "dossier")
     public void applicationDenied(String message) {
         log.info("получено сообщение:{}", message);
-        EmailMessage emailMessage= messageToSend(message);
+        EmailMessage emailMessage = messageToSend(message);
         mailSender.sendMail(emailMessage);
     }
-    private EmailMessage messageToSend(String message)  {
+
+    private EmailMessage messageToSend(String message) {
         try {
-          return  new  ObjectMapper().readValue(message, EmailMessage.class);
+            return new ObjectMapper().readValue(message, EmailMessage.class);
         } catch (Exception e) {
-            log.info("ошибка отпавки сообщения:{}",e.getMessage());
+            log.info("ошибка отпавки сообщения:{}", e.getMessage());
             throw new IllegalArgumentException();
         }
-    }
-    private String send (@PathVariable Long applicationId) {
-
-        return conveyorClient.send(applicationId);
     }
 
 }

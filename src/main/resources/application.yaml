@@ -15,4 +15,6 @@ mail:
     auth: true
     starttls.enable: true
     ssl.trust: app.debugmail.io
+server:
+  port: 8083
 
